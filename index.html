@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modular LIMS based on R Shiny</title>
+<style>
+  :root {
+    --blue: #006d91;
+    --teal: #12a3a3;
+    --ink: #1c2b30;
+    --muted: #55686d;
+    --bg: #ffffff;
+    --card-bg: #ffffff;
+    --border: #e4eaec;
+    --shadow: 0 4px 18px rgba(0, 40, 55, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ===== Header ===== */
+  header.site-header {
+    background: linear-gradient(135deg, #f7fbfc 0%, #eef6f7 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 72px 0 56px;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  h1.title {
+    font-size: 2.6rem;
+    line-height: 1.2;
+    margin: 0 0 16px;
+    color: var(--blue);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  p.subtitle {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 760px;
+    margin: 0 0 28px;
+    font-weight: 400;
+  }
+
+  p.intro {
+    font-size: 1rem;
+    max-width: 820px;
+    color: var(--ink);
+    margin: 0;
+    border-left: 3px solid var(--teal);
+    padding-left: 18px;
+  }
+
+  /* ===== Main content ===== */
+  main {
+    padding: 64px 0 40px;
+  }
+
+  section.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 40px;
+    margin-bottom: 40px;
+  }
+
+  section.card:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .card-index {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--blue);
+    border-radius: 999px;
+    padding: 4px 12px;
+    letter-spacing: 0.04em;
+  }
+
+  h2.card-title {
+    font-size: 1.75rem;
+    margin: 0;
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .video-frame {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0d1b1f;
+    box-shadow: inset 0 0 0 1px var(--border);
+    margin-bottom: 24px;
+  }
+
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 560px;
+    background: #000;
+  }
+
+  p.card-desc {
+    font-size: 1.02rem;
+    color: var(--muted);
+    margin: 0 0 22px;
+    max-width: 780px;
+  }
+
+  h3.features-title {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--teal);
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+
+  ul.feature-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px 20px;
+  }
+
+  ul.feature-list li {
+    font-size: 0.96rem;
+    color: var(--ink);
+    padding-left: 26px;
+    position: relative;
+  }
+
+  ul.feature-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+
+  /* ===== Footer ===== */
+  footer.site-footer {
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    padding: 44px 0 60px;
+    text-align: center;
+  }
+
+  .footer-tag {
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--blue);
+    background: #eaf5f8;
+    border-radius: 999px;
+    padding: 8px 18px;
+    margin-bottom: 18px;
+    letter-spacing: 0.02em;
+  }
+
+  .footer-details p {
+    margin: 4px 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .footer-details p.institution {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 640px) {
+    header.site-header {
+      padding: 52px 0 40px;
+    }
+
+    h1.title {
+      font-size: 1.9rem;
+    }
+
+    p.subtitle {
+      font-size: 1rem;
+    }
+
+    section.card {
+      padding: 26px;
+      border-radius: 14px;
+    }
+
+    h2.card-title {
+      font-size: 1.4rem;
+    }
+
+    ul.feature-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrapper">
+      <span class="eyebrow">Congreso de Análisis Instrumental 2026</span>
+      <h1 class="title">Modular LIMS based on R Shiny</h1>
+      <p class="subtitle">A customizable web-based Laboratory Information Management System developed for laboratory traceability and data management.</p>
+	  <span class="eyebrow">Annabel Margalef Burgos</span>
+      <p class="intro">
+        This project presents a modular Laboratory Information Management System (LIMS) built entirely in R Shiny,
+        designed to streamline laboratory operations through three integrated modules: document management,
+        inventory control, and sample traceability. The system offers a flexible, cost-effective alternative to
+        commercial LIMS platforms, adaptable to the specific workflows of research and clinical laboratories.
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrapper">
+	
+	  <section class="card" id="sample-manager">
+        <div class="card-header">
+          <span class="card-index">01</span>
+          <h2 class="card-title">Sample Manager</h2>
+        </div>
+        <div class="video-frame">
+          <video controls preload="metadata">
+            <source src="sample.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <p class="card-desc">The Sample Manager provides complete traceability of biological samples throughout the analytical workflow.</p>
+        <h3 class="features-title">Main functionalities</h3>
+        <ul class="feature-list">
+          <li>Sample registration</li>
+          <li>Status monitoring</li>
+          <li>Traceability</li>
+          <li>Barcode identification</li>
+          <li>Report generation</li>
+        </ul>
+      </section>
+	  
+	  
+	  <section class="card" id="inventory-manager">
+		<div class="card-header">
+		  <span class="card-index">02</span>
+		  <h2 class="card-title">Inventory Manager</h2>
+		</div>
+		<div class="video-frame">
+		  <video controls preload="metadata">
+			<source src="inventory.mp4" type="video/mp4">
+			Your browser does not support the video tag.
+		  </video>
+		</div>
+		<p class="card-desc">The Inventory Manager monitors laboratory materials and reagents while facilitating stock control.</p>
+		<h3 class="features-title">Main functionalities</h3>
+		<ul class="feature-list">
+		  <li>Stock monitoring</li>
+		  <li>Low-stock alerts</li>
+		  <li>Reagent management</li>
+		  <li>Order tracking</li>
+		  <li>Search and filtering</li>
+		</ul>
+	  </section>
+
+      <section class="card" id="document-manager">
+        <div class="card-header">
+          <span class="card-index">03</span>
+          <h2 class="card-title">Document Manager</h2>
+        </div>
+        <div class="video-frame">
+          <video controls preload="metadata">
+            <source src="document.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <p class="card-desc">The Document Manager centralizes laboratory documentation and ensures version control and organized storage.</p>
+        <h3 class="features-title">Main functionalities</h3>
+        <ul class="feature-list">
+          <li>Version control</li>
+          <li>Folder hierarchy</li>
+          <li>Metadata management</li>
+          <li>Document search</li>
+          <li>Easy updates</li>
+        </ul>
+      </section>
+
+      
+      
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrapper">
+      <span class="footer-tag">Developed in R Shiny</span>
+      <div class="footer-details">
+        <p class="institution">Institut de Recerca Biomèdica Catalunya Sud (IRBcatSud)</p>
+        <p class="institution">Universitat Rovira i Virgili</p>
+        <p>Congreso de Análisis Instrumental 2026</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
